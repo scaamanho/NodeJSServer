@@ -1,0 +1,13 @@
+{
+  "name": "NodeJsServer",
+  "version": "0.0.1",
+  "description": "Create a Nodejs static web server [http/https] with support for web sockets",
+  "private": "true",
+  "author": {
+    "name": "Santiago Caamaño"
+  },
+  "dependencies": {
+    "socket.io": "1.0.6",
+    "express": "4.12.0"
+  }
+}
