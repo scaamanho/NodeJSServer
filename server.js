@@ -103,7 +103,6 @@ function initHttpdServer(protocol, port) {
 function broadcastMessage (channel,msgType,msg) {
   msg = filterEmbedCode (msg);
   if (channel && channel !== 'ALL') {
-    //
     console.log ('broadcasting '+msgType+' to channel:'+channel);
     io.sockets.in (channel).emit (msgType,msg);
   } else {

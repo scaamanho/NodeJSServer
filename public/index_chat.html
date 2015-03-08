@@ -1,0 +1,186 @@
+<html>
+
+<head>
+  <title>INplan Web Sockets Monitor</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/components.css">
+  <script src="js/jquery.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+
+  <script>
+    var connected = false;
+    var socket;
+
+    function connect() {
+      if (connected) {
+        socket.disconnect();
+        $("#btConnect").addClass("btn btn-warning");
+        $("#btConnect").prop('value', 'Disabled');
+        $("#btConnect").prop("disabled", true);
+
+        $("#lastUpdatedTime").removeClass("form-control");
+        $("#lastUpdatedTime").addClass("btn btn-danger");
+        $("#lastUpdatedTime").prop('value', 'Disconnected');
+        connected = false;
+      } else {
+        createShocket();
+        $("#btConnect").addClass("btn btn-danger");
+        $("#btConnect").prop('value', 'Disconnect');
+
+        $("#lastUpdatedTime").removeClass("btn btn-danger");
+        $("#lastUpdatedTime").addClass("form-control");
+        $("#lastUpdatedTime").prop('value', new Date().toLocaleTimeString());
+        connected = true;
+      }
+    }
+
+    function createShocket() {
+      url = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
+      group = $("#stakeholder").val();
+      socket = io.connect(url, {
+        query: "useName=" + userName;
+      });
+      socket.on('chatUpdate', chatUpdate);
+
+      /*Sample Test*/
+      socket.emit('chatUpdate', 'update chat');
+      socket.emit('chatGlobalUpdate', 'update global chat');
+      socket.emit('chatUpdate', 'update chat 2');
+      socket.emit('chatGlobalUpdate', 'update global chat 2');
+    }
+
+    //Listener de eventos web sockets
+
+    chatUpdate = function (content) {
+      console.log('chatUpdate:' + content)
+      updateWidget("cu", cuMsg++);
+      messageContainer.chatUpdate = content;
+    }
+
+    function updateWidget(widget, numMessages) {
+      dateString = new Date().toLocaleTimeString();
+      $("#" + widget + "Messages").text(numMessages);
+      $("#" + widget + "Timestamp").text(dateString);
+      $("#lastUpdatedTime").prop('value', dateString);
+      if (numMessages === 1) {
+        $("#" + widget + "Btn").removeClass('btn-primary');
+        $("#" + widget + "Btn").addClass('btn-success');
+      }
+    }
+
+
+  </script>
+</head>
+
+<body>
+  <div class="container">
+  <!-- Fixed navbar -->
+  <!--nav class="navbar navbar-default  navbar-inverse navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#firstTab">Project name</a>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="#firstTab">Home</a>
+          </li>
+          <li><a href="#secondTab">About</a>
+          </li>
+          <li><a href="#thirdTab">Contact</a>
+          </li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+              Dropdown <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="#fourthTab">Action</a>
+              </li>
+              <li><a href="#">Another action</a>
+              </li>
+              <li><a href="#">Something else here</a>
+              </li>
+              <li class="divider"></li>
+              <li class="dropdown-header">Nav header</li>
+              <li><a href="#">Separated link</a>
+              </li>
+              <li><a href="#">One more separated link</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="../navbar/">Default</a>
+          </li>
+          <li><a href="../navbar-static-top/">Static top</a>
+          </li>
+          <li class="active"><a href="./">Fixed top <span class="sr-only">(current)</span></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav-->
+
+  <div class="container">
+
+    <!-- head gap filler -->
+    <!--div>
+      <h1>&ndash;</h1>
+    </div-->
+
+    <ul id="myTab" class="nav nav-tabs">
+      <li class="active" id="home-tab">
+        <a href="#firstTab" data-toggle="tab">
+             Tutorial Point Home
+          </a>
+      </li>
+      <li><a href="#secondTab" data-toggle="tab">iOS</a>
+      </li>
+      <li class="dropdown">
+        <a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">Java
+             <b class="caret"></b>
+          </a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
+          <li><a href="#thirdTab" tabindex="-1" data-toggle="tab">jmeter</a>
+          </li>
+          <li><a href="#fourthTab" tabind    //ex="-1" data-toggle="tab">ejb</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+
+
+    <div id="tabsContent" class="tab-content">
+      <div class="tab-pane fade in active" id="firstTab">
+        <p>Tutorials Point is a place for beginners in all technical areas. This website covers most of the latest technoligies and explains each of the technology with simple examples. You also have a
+          <b>tryit</b> editor, wherein you can edit your code and try out different possibilities of the examples.</p>
+      </div>
+      <div class="tab-pane fade  md-effect-2 md-content" id="secondTab">
+        <p>iOS is a mobile operating system developed and distributed by Apple Inc. Originally released in 2007 for the iPhone, iPod Touch, and Apple TV. iOS is derived from OS X, with which it shares the Darwin foundation. iOS is Apple's mobile version of the OS X operating system used on Apple computers.</p>
+      </div>
+      <div class="tab-pane fade  md-effect-2 md-content" id="thirdTab">
+        <p>jMeter is an Open Source testing software. It is 100% pure Java application for load and performance testing.</p>
+      </div>
+      <div class="tab-pane fade  md-effect-2 md-content" id="fourthTab">
+        <p>Enterprise Java Beans (EJB) is a development architecture for building highly scalable and robust enterprise level applications to be deployed on J2EE compliant Application Server such as JBOSS, Web Logic etc.
+        </p>
+      </div>
+    </div>
+
+  </div>
+  <script>
+  $('#home-tab').click(function () {
+    /*$('#secondTab').hide();
+    $('#thirdTab').hide();
+    $('#fourthTab').hide();
+    $('#firstTab').slideDown()//('slow');*/
+  });
+  </script>
+</html>
